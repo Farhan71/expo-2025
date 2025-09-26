@@ -169,7 +169,7 @@ function getServicesData(): Service[] {
   if (typeof window === 'undefined') {
     try {
       // Only import server-side module when on server
-      const { getServicesForSSR } = require('./services.fileStorage.server');
+      const { getServicesForSSR } = require('./services.fileStorage.vercel');
       return getServicesForSSR();
     } catch (error) {
       console.warn(

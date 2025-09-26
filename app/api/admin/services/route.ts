@@ -1,7 +1,7 @@
 import {
   createService,
   getAllServices,
-} from '@/lib/services/services.fileStorage.server';
+} from '@/lib/services/services.fileStorage.vercel';
 import { ServiceCreateSchema } from '@/lib/services/services.schema';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
