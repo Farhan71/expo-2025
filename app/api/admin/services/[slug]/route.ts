@@ -1,7 +1,7 @@
 import {
   deleteService,
   updateService,
-} from '@/lib/services/services.fileStorage.vercel';
+} from '@/lib/services/services.firestore';
 import { ServiceUpdateSchema } from '@/lib/services/services.schema';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
@@ -29,7 +29,7 @@ export async function PUT(
     // Validate the request body
     const validatedData = ServiceUpdateSchema.parse(body);
 
-    // Update the service using file storage
+    // Update the service using Firebase Firestore
     const updatedService = await updateService(slug, validatedData);
 
     return NextResponse.json({
@@ -74,7 +74,7 @@ export async function DELETE(
 
     const slug = params.slug;
 
-    // Delete the service using file storage
+    // Delete the service using Firebase Firestore
     await deleteService(slug);
 
     return NextResponse.json({

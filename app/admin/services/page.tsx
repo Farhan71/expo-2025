@@ -28,13 +28,13 @@ export default function AdminServicesPage() {
       } else {
         console.error('Failed to fetch services');
         // Fallback to static data if API fails
-        const allServices = getAllServices();
+        const allServices = await getAllServices();
         setServices(allServices);
       }
     } catch (error) {
       console.error('Error fetching services:', error);
       // Fallback to static data if API fails
-      const allServices = getAllServices();
+      const allServices = await getAllServices();
       setServices(allServices);
     } finally {
       setLoading(false);

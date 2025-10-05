@@ -65,7 +65,7 @@ export default function AdminEditServicePage() {
         });
       } else {
         // Fallback to static data if API fails
-        const service = getServiceBySlug(slug);
+        const service = await getServiceBySlug(slug);
         if (!service) {
           alert('Service not found');
           router.push('/admin/services');
@@ -87,7 +87,7 @@ export default function AdminEditServicePage() {
     } catch (error) {
       console.error('Error fetching service data:', error);
       // Fallback to static data
-      const service = getServiceBySlug(slug);
+      const service = await getServiceBySlug(slug);
       if (!service) {
         alert('Service not found');
         router.push('/admin/services');

@@ -19,8 +19,8 @@ export const metadata: Metadata = {
   ],
 };
 
-export default function ServicesPage() {
-  const services = getAllActiveServices();
+export default async function ServicesPage() {
+  const services = await getAllActiveServices();
 
   return (
     <UiSection>

@@ -1,7 +1,7 @@
 import {
   createService,
   getAllServices,
-} from '@/lib/services/services.fileStorage.vercel';
+} from '@/lib/services/services.firestore';
 import { ServiceCreateSchema } from '@/lib/services/services.schema';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     // Validate the request body
     const validatedData = ServiceCreateSchema.parse(body);
 
-    // Create the service using file storage
+    // Create the service using Firebase Firestore
     const newService = await createService(validatedData);
 
     return NextResponse.json(
@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Fetch all services from file storage
+    // Fetch all services from Firebase Firestore
     const services = await getAllServices();
 
     return NextResponse.json({

@@ -2,12 +2,14 @@ import { UiButton } from '@/components/ui/UiButton';
 import { UiCard } from '@/components/ui/UiCard';
 import { UiTag } from '@/components/ui/UiFormFields';
 import { UiSection, UiSectionHeader } from '@/components/ui/UiSection';
-import { getAllActiveServices } from '@/lib/services/services.data';
+import { Service } from '@/lib/services/services.schema';
 import Link from 'next/link';
 
-export function ServicesPreview() {
-  const services = getAllActiveServices().slice(0, 3); // Show first 3 services
+interface ServicesPreviewProps {
+  services: Service[];
+}
 
+export function ServicesPreview({ services }: ServicesPreviewProps) {
   return (
     <UiSection>
       <UiSectionHeader

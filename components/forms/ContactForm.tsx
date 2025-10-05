@@ -3,11 +3,12 @@
 import { UiButton } from '@/components/ui/UiButton';
 import { UiCard } from '@/components/ui/UiCard';
 import { UiInput, UiTextArea } from '@/components/ui/UiFormFields';
-import { getAllActiveServices } from '@/lib/services/services.data';
+import { Service } from '@/lib/services/services.schema';
 import React, { useState } from 'react';
 
 interface ContactFormProps {
   selectedService?: string;
+  services: Service[];
 }
 
 interface FormData {
@@ -26,7 +27,10 @@ interface FormState {
   message: string;
 }
 
-export function ContactForm({ selectedService = '' }: ContactFormProps) {
+export function ContactForm({
+  selectedService = '',
+  services,
+}: ContactFormProps) {
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
@@ -43,7 +47,6 @@ export function ContactForm({ selectedService = '' }: ContactFormProps) {
     message: '',
   });
 
-  const services = getAllActiveServices();
   const formTimestamp = React.useRef(Date.now());
 
   const handleInputChange =

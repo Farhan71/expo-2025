@@ -1,6 +1,7 @@
 import { ContactForm } from '@/components/forms/ContactForm';
 import { UiCard } from '@/components/ui/UiCard';
 import { UiSection, UiSectionHeader } from '@/components/ui/UiSection';
+import { getAllActiveServices } from '@/lib/services/services.data';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -16,7 +17,8 @@ export const metadata: Metadata = {
   ],
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const services = await getAllActiveServices();
   return (
     <>
       {/* Hero Section */}
@@ -159,7 +161,7 @@ export default function ContactPage() {
             <h2 className="mb-6 text-2xl font-bold text-text-primary">
               Send us a Message
             </h2>
-            <ContactForm />
+            <ContactForm services={services} />
           </div>
         </div>
       </UiSection>

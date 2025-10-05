@@ -9,7 +9,11 @@
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "format": "prettier --write .",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "migrate": "tsx scripts/migrate-to-firebase.ts",
+    "test-firebase": "tsx scripts/test-firebase.ts",
+    "diagnose-firebase": "tsx scripts/diagnose-firebase.ts",
+    "check-firebase": "tsx scripts/check-firebase-data.ts"
   },
   "dependencies": {
     "@ant-design/icons": "^5.4.0",
@@ -17,6 +21,7 @@
     "antd": "^5.20.0",
     "autoprefixer": "^10.4.20",
     "clsx": "^2.1.1",
+    "firebase": "^10.14.1",
     "js-cookie": "^3.0.5",
     "next": "14.2.5",
     "postcss": "^8.4.40",
@@ -32,10 +37,12 @@
     "@types/node": "^20.14.12",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "dotenv": "^17.2.3",
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.5",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.5",
+    "tsx": "^4.20.6",
     "typescript": "^5.5.4"
   }
 }

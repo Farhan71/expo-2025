@@ -8,6 +8,7 @@ export const ServiceFAQSchema = z.object({
 
 // Service schema
 export const ServiceSchema = z.object({
+  id: z.string().optional(), // Firebase document ID (optional for creation)
   slug: z
     .string()
     .min(1, 'Slug is required')
@@ -38,7 +39,10 @@ export const ServiceSchema = z.object({
 });
 
 // Service creation/update schema (excludes auto-generated fields)
-export const ServiceCreateSchema = ServiceSchema.omit({ lastUpdated: true });
+export const ServiceCreateSchema = ServiceSchema.omit({
+  id: true,
+  lastUpdated: true,
+});
 
 // Service update schema (makes slug optional for editing)
 export const ServiceUpdateSchema = ServiceCreateSchema.partial({ slug: true });

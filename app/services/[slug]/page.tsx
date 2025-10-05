@@ -20,7 +20,7 @@ interface ServicePageProps {
 export async function generateMetadata({
   params,
 }: ServicePageProps): Promise<Metadata> {
-  const service = getServiceBySlug(params.slug);
+  const service = await getServiceBySlug(params.slug);
 
   if (!service) {
     return {
@@ -55,18 +55,24 @@ export async function generateMetadata({
 
 // Generate static params for all services
 export async function generateStaticParams() {
-  const services = getAllActiveServices();
+  const services = await getAllActiveServices();
   return services.map((service) => ({
     slug: service.slug,
   }));
 }
 
-export default function ServicePage({ params }: ServicePageProps) {
-  const service = getServiceBySlug(params.slug);
+export default async function ServicePage({ params }: ServicePageProps) {
+  const service = await getServiceBySlug(params.slug);
 
   if (!service) {
     notFound();
   }
+
+  // Get related services
+  const allServices = await getAllActiveServices();
+  const relatedServices = allServices
+    .filter((s) => s.slug !== service.slug)
+    .slice(0, 3);
 
   // Generate JSON-LD structured data
   const jsonLd = {
@@ -313,28 +319,25 @@ export default function ServicePage({ params }: ServicePageProps) {
         />
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {getAllActiveServices()
-            .filter((s) => s.slug !== service.slug)
-            .slice(0, 3)
-            .map((relatedService) => (
-              <UiCard
-                key={relatedService.slug}
-                variant="elevated"
-                className="text-center transition-shadow duration-300 hover:shadow-xl"
-              >
-                <h3 className="mb-3 text-xl font-semibold text-text-primary">
-                  {relatedService.name}
-                </h3>
-                <p className="mb-4 text-sm leading-relaxed text-text-secondary">
-                  {relatedService.shortDescription}
-                </p>
-                <UiButton variant="secondary" size="sm" className="w-full">
-                  <Link href={`/services/${relatedService.slug}`}>
-                    Learn More
-                  </Link>
-                </UiButton>
-              </UiCard>
-            ))}
+          {relatedServices.map((relatedService) => (
+            <UiCard
+              key={relatedService.slug}
+              variant="elevated"
+              className="text-center transition-shadow duration-300 hover:shadow-xl"
+            >
+              <h3 className="mb-3 text-xl font-semibold text-text-primary">
+                {relatedService.name}
+              </h3>
+              <p className="mb-4 text-sm leading-relaxed text-text-secondary">
+                {relatedService.shortDescription}
+              </p>
+              <UiButton variant="secondary" size="sm" className="w-full">
+                <Link href={`/services/${relatedService.slug}`}>
+                  Learn More
+                </Link>
+              </UiButton>
+            </UiCard>
+          ))}
         </div>
 
         <div className="mt-8 text-center">

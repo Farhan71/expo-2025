@@ -1,7 +1,13 @@
-import type { Service } from './services.schema';
+/**
+ * Firebase Migration Script
+ * This script imports the current services data into Firebase Firestore
+ * Run this once after setting up Firebase configuration
+ */
 
-// Default services data (fallback for client-side)
-const defaultServicesData: Service[] = [
+import { batchImportServices } from '../lib/services/services.firestore';
+
+// Current services data to migrate
+const servicesToMigrate = [
   {
     name: 'Expert Roofing Services',
     slug: 'roofing-services',
@@ -30,8 +36,8 @@ const defaultServicesData: Service[] = [
       },
     ],
     images: [
-      '/images/services/roofing-1.jpg',
-      '/images/services/roofing-2.jpg',
+      'https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?w=800',
+      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800',
     ],
     highlights: [
       'Licensed and insured contractors',
@@ -53,7 +59,6 @@ const defaultServicesData: Service[] = [
       ],
     },
     active: true,
-    lastUpdated: new Date('2024-01-25'),
   },
   {
     name: 'Waterproofing Solutions',
@@ -83,8 +88,8 @@ const defaultServicesData: Service[] = [
       },
     ],
     images: [
-      '/images/services/waterproofing-1.jpg',
-      '/images/services/waterproofing-2.jpg',
+      'https://images.unsplash.com/photo-1516156008625-3a9d6067fab5?w=800',
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800',
     ],
     highlights: [
       'Free moisture inspections',
@@ -106,7 +111,6 @@ const defaultServicesData: Service[] = [
       ],
     },
     active: true,
-    lastUpdated: new Date('2024-01-25'),
   },
   {
     name: 'Kitchen & Bathroom Renovations',
@@ -136,8 +140,8 @@ const defaultServicesData: Service[] = [
       },
     ],
     images: [
-      '/images/services/renovation-1.jpg',
-      '/images/services/renovation-2.jpg',
+      'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800',
+      'https://images.unsplash.com/photo-1504307651254-35680f6a952d?w=800',
     ],
     highlights: [
       'Custom design services',
@@ -159,54 +163,40 @@ const defaultServicesData: Service[] = [
       ],
     },
     active: true,
-    lastUpdated: new Date('2024-01-25'),
   },
 ];
 
-// Helper function to get data from Firebase or fallback to default
-async function getServicesData(): Promise<Service[]> {
-  // Try to get from Firebase if available
-  if (typeof window === 'undefined') {
-    try {
-      // Only import Firebase module when on server
-      const { getServicesForSSR } = await import('./services.firestore');
-      return await getServicesForSSR();
-    } catch (error) {
-      console.warn('Firebase services loading failed, using defaults:', error);
-      return defaultServicesData;
+async function migrateToFirebase() {
+  try {
+    console.log('Starting Firebase migration...');
+    console.log(
+      `Migrating ${servicesToMigrate.length} services to Firebase Firestore`
+    );
+
+    // Import services one by one to better handle errors
+    for (let i = 0; i < servicesToMigrate.length; i++) {
+      const service = servicesToMigrate[i];
+      try {
+        console.log(`Importing service ${i + 1}: ${service.name}`);
+        await batchImportServices([service]);
+        console.log(`✅ Successfully imported: ${service.name}`);
+      } catch (error: any) {
+        console.error(`❌ Failed to import ${service.name}:`, error.message);
+        // Continue with other services
+      }
     }
+
+    console.log('✅ Migration completed!');
+    console.log('Check Firebase Console to verify your data');
+  } catch (error) {
+    console.error('❌ Migration failed:', error);
+    process.exit(1);
   }
-
-  // Use default data for client-side (components should use API calls)
-  return defaultServicesData;
 }
 
-// Helper functions for working with services data
-export async function getServiceBySlug(
-  slug: string
-): Promise<Service | undefined> {
-  const services = await getServicesData();
-  return services.find((service) => service.slug === slug && service.active);
+// Run migration if this file is executed directly
+if (require.main === module) {
+  migrateToFirebase();
 }
 
-export async function getAllActiveServices(): Promise<Service[]> {
-  const services = await getServicesData();
-  return services
-    .filter((service) => service.active)
-    .sort((a, b) => a.order - b.order);
-}
-
-export async function getAllServices(): Promise<Service[]> {
-  const services = await getServicesData();
-  return services.sort((a, b) => a.order - b.order);
-}
-
-export async function getServicesByCategory(
-  category?: string
-): Promise<Service[]> {
-  // For future categorization if needed
-  return await getAllActiveServices();
-}
-
-// Legacy export - kept for backwards compatibility
-export const servicesData: Service[] = defaultServicesData;
+export default migrateToFirebase;
