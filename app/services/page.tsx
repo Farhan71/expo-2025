@@ -2,7 +2,7 @@ import { UiButton } from '@/components/ui/UiButton';
 import { UiCard } from '@/components/ui/UiCard';
 import { UiTag } from '@/components/ui/UiFormFields';
 import { UiSection, UiSectionHeader } from '@/components/ui/UiSection';
-import { getAllActiveServices } from '@/lib/services/services.data';
+import { getActiveServicesForSSR } from '@/lib/services/services.firestore';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
@@ -19,8 +19,13 @@ export const metadata: Metadata = {
   ],
 };
 
+// Disable caching for this page to ensure fresh data
+export const revalidate = 0;
+
 export default async function ServicesPage() {
-  const services = await getAllActiveServices();
+  console.log('📋 ServicesPage: Fetching services data...');
+  const services = await getActiveServicesForSSR();
+  console.log('📋 ServicesPage: Got', services.length, 'services');
 
   return (
     <UiSection>

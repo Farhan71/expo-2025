@@ -3,9 +3,9 @@ import { UiCard } from '@/components/ui/UiCard';
 import { UiTag } from '@/components/ui/UiFormFields';
 import { UiSection, UiSectionHeader } from '@/components/ui/UiSection';
 import {
-  getAllActiveServices,
-  getServiceBySlug,
-} from '@/lib/services/services.data';
+  getActiveServicesForSSR,
+  getServiceBySlugForSSR,
+} from '@/lib/services/services.firestore';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -20,7 +20,7 @@ interface ServicePageProps {
 export async function generateMetadata({
   params,
 }: ServicePageProps): Promise<Metadata> {
-  const service = await getServiceBySlug(params.slug);
+  const service = await getServiceBySlugForSSR(params.slug);
 
   if (!service) {
     return {
@@ -55,21 +55,21 @@ export async function generateMetadata({
 
 // Generate static params for all services
 export async function generateStaticParams() {
-  const services = await getAllActiveServices();
+  const services = await getActiveServicesForSSR();
   return services.map((service) => ({
     slug: service.slug,
   }));
 }
 
 export default async function ServicePage({ params }: ServicePageProps) {
-  const service = await getServiceBySlug(params.slug);
+  const service = await getServiceBySlugForSSR(params.slug);
 
   if (!service) {
     notFound();
   }
 
   // Get related services
-  const allServices = await getAllActiveServices();
+  const allServices = await getActiveServicesForSSR();
   const relatedServices = allServices
     .filter((s) => s.slug !== service.slug)
     .slice(0, 3);

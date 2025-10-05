@@ -165,19 +165,26 @@ const defaultServicesData: Service[] = [
 
 // Helper function to get data from Firebase or fallback to default
 async function getServicesData(): Promise<Service[]> {
-  // Try to get from Firebase if available
+  // Always try Firebase first (server-side only)
   if (typeof window === 'undefined') {
     try {
-      // Only import Firebase module when on server
+      // Direct import Firebase functions
       const { getActiveServicesForSSR } = await import('./services.firestore');
-      return await getActiveServicesForSSR();
+      const firebaseData = await getActiveServicesForSSR();
+      console.log(
+        '✅ Firebase data loaded successfully:',
+        firebaseData.length,
+        'services'
+      );
+      return firebaseData;
     } catch (error) {
-      console.warn('Firebase services loading failed, using defaults:', error);
+      console.error('❌ Firebase services loading failed:', error);
+      console.log('📋 Using default fallback data');
       return defaultServicesData;
     }
   }
 
-  // Use default data for client-side (components should use API calls)
+  // Client-side fallback
   return defaultServicesData;
 }
 
@@ -185,18 +192,27 @@ async function getServicesData(): Promise<Service[]> {
 export async function getServiceBySlug(
   slug: string
 ): Promise<Service | undefined> {
-  // Try to get from Firebase if available
+  // Always try Firebase first (server-side only)
   if (typeof window === 'undefined') {
     try {
-      // Only import Firebase module when on server
+      // Direct import Firebase functions
       const { getServiceBySlugForSSR } = await import('./services.firestore');
       const service = await getServiceBySlugForSSR(slug);
+      console.log(
+        '✅ Firebase service loaded for slug:',
+        slug,
+        service ? 'found' : 'not found'
+      );
       return service || undefined;
     } catch (error) {
-      console.warn('Firebase service loading failed, using defaults:', error);
+      console.error(
+        '❌ Firebase service loading failed for slug:',
+        slug,
+        error
+      );
     }
   }
-  
+
   // Fallback to default data
   const services = await getServicesData();
   return services.find((service) => service.slug === slug && service.active);

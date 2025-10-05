@@ -16,14 +16,66 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
+// Debug Firebase configuration
+console.log('🔥 Firebase Configuration Status:');
+console.log('- API Key:', firebaseConfig.apiKey ? '✅ Present' : '❌ Missing');
+console.log(
+  '- Auth Domain:',
+  firebaseConfig.authDomain ? '✅ Present' : '❌ Missing'
+);
+console.log(
+  '- Project ID:',
+  firebaseConfig.projectId ? '✅ Present' : '❌ Missing'
+);
+console.log(
+  '- Storage Bucket:',
+  firebaseConfig.storageBucket ? '✅ Present' : '❌ Missing'
+);
+console.log(
+  '- Messaging Sender ID:',
+  firebaseConfig.messagingSenderId ? '✅ Present' : '❌ Missing'
+);
+console.log('- App ID:', firebaseConfig.appId ? '✅ Present' : '❌ Missing');
+
+// Check if all required config values are present
+const missingConfig = Object.entries(firebaseConfig).filter(
+  ([key, value]) => !value
+);
+if (missingConfig.length > 0) {
+  console.error(
+    '❌ Missing Firebase configuration:',
+    missingConfig.map(([key]) => key)
+  );
+  throw new Error(
+    'Firebase configuration is incomplete. Missing: ' +
+      missingConfig.map(([key]) => key).join(', ')
+  );
+}
+
 // Initialize Firebase
 let app: any;
-if (getApps().length === 0) {
-  app = initializeApp(firebaseConfig);
-} else {
-  app = getApps()[0];
+try {
+  if (getApps().length === 0) {
+    app = initializeApp(firebaseConfig);
+    console.log('✅ Firebase app initialized successfully');
+  } else {
+    app = getApps()[0];
+    console.log('✅ Firebase app already exists, reusing');
+  }
+} catch (error) {
+  console.error('❌ Failed to initialize Firebase app:', error);
+  throw error;
 }
 
 // Initialize Firestore
-export const db = getFirestore(app);
+let db: any;
+try {
+  db = getFirestore(app);
+  console.log('✅ Firestore initialized successfully');
+} catch (error) {
+  console.error('❌ Failed to initialize Firestore:', error);
+  throw error;
+}
+
+export { db };
 export default app;

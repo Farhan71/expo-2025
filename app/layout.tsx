@@ -4,6 +4,7 @@ import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import '@/styles/globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import NextTopLoader from 'nextjs-toploader';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -108,6 +109,20 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
+        <NextTopLoader
+          color="rgb(59, 130, 246)"
+          initialPosition={0.08}
+          crawlSpeed={200}
+          height={3}
+          crawl={true}
+          showSpinner={true}
+          easing="ease"
+          speed={200}
+          shadow="0 0 10px rgb(59, 130, 246, 0.4), 0 0 5px rgb(59, 130, 246, 0.6)"
+          template='<div class="bar" role="bar"><div class="peg"></div></div><div class="spinner" role="spinner"><div class="spinner-icon"></div></div>'
+          zIndex={1600}
+          showAtBottom={false}
+        />
         <ThemeProvider>
           <div className="flex min-h-screen flex-col">
             <Navbar />

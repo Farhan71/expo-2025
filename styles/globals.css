@@ -139,3 +139,22 @@ body {
     rgb(var(--color-primary-rgb) / 0.05) 100%
   );
 }
+
+/* NextTopLoader custom styles for theme integration */
+#nprogress .bar {
+  background: rgb(var(--color-primary-rgb)) !important;
+  box-shadow:
+    0 0 10px rgba(var(--color-primary-rgb), 0.4),
+    0 0 5px rgba(var(--color-primary-rgb), 0.6) !important;
+}
+
+#nprogress .peg {
+  box-shadow:
+    0 0 10px rgb(var(--color-primary-rgb)),
+    0 0 5px rgb(var(--color-primary-rgb)) !important;
+}
+
+#nprogress .spinner-icon {
+  border-top-color: rgb(var(--color-primary-rgb)) !important;
+  border-left-color: rgb(var(--color-primary-rgb)) !important;
+}
