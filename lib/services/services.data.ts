@@ -169,8 +169,8 @@ async function getServicesData(): Promise<Service[]> {
   if (typeof window === 'undefined') {
     try {
       // Only import Firebase module when on server
-      const { getServicesForSSR } = await import('./services.firestore');
-      return await getServicesForSSR();
+      const { getActiveServicesForSSR } = await import('./services.firestore');
+      return await getActiveServicesForSSR();
     } catch (error) {
       console.warn('Firebase services loading failed, using defaults:', error);
       return defaultServicesData;
@@ -185,6 +185,19 @@ async function getServicesData(): Promise<Service[]> {
 export async function getServiceBySlug(
   slug: string
 ): Promise<Service | undefined> {
+  // Try to get from Firebase if available
+  if (typeof window === 'undefined') {
+    try {
+      // Only import Firebase module when on server
+      const { getServiceBySlugForSSR } = await import('./services.firestore');
+      const service = await getServiceBySlugForSSR(slug);
+      return service || undefined;
+    } catch (error) {
+      console.warn('Firebase service loading failed, using defaults:', error);
+    }
+  }
+  
+  // Fallback to default data
   const services = await getServicesData();
   return services.find((service) => service.slug === slug && service.active);
 }
